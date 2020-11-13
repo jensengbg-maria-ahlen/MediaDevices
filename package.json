@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy": "surge . --domain snotty-detail.surge.sh",
+    "deploy": "surge . --domain https://snotty-detail.surge.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
