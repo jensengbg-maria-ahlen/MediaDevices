@@ -1,3 +1,21 @@
 body {
-    background-color: #f0ad1d;
+    background-color: #f3cb74;
+}
+
+.error {
+    color: rgb(119, 0, 0);
+    font-weight: bolder;
+    font-size: 1.2rem;
+    padding: .5em;
+    min-height: 1.5em;
+}
+
+button {
+    background-color: #f7e8c9;
+    padding: .8em 1.2em;
+}
+
+.profile img {
+    width: 320px;
+    height: 240px;
 }
