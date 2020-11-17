@@ -49,17 +49,18 @@ function cameraSettings() {
 
     stopButton.addEventListener('click', () => {
         errorMessage.innerHTML = '';
-        if (!stream) {
+        if( !stream ) {
             errorMessage.innerHTML = 'No video to stop.';
             return;
         }
         let tracks = stream.getTracks();
         tracks.forEach(track => track.stop());
+        
         stopButton.disabled = true;
         photoButton.disabled = true;
+        startButton.disabled = false;
         startRecording.disabled = true;
         stopRecording.disabled = true;
-        startButton.disabled = false;
     })
 
     photoButton.addEventListener('click', async () => {
@@ -75,45 +76,47 @@ function cameraSettings() {
 
         let imgUrl = URL.createObjectURL(blob);
         profilePic.src = imgUrl;
+        profilePic.classList.remove('hidden');
     })
 
     let mediaRecorder;
-    startRecording.addEventListener('click', () => {
-        if (! stream) {
+    startRecording.addEventListener('click', async () => {
+        if( !stream ) {
             errorMessage.innerHTML = 'No video available';
             return;
         }
+
         startRecording.disabled = true;
         stopRecording.disabled = false;
-        const mediaRecorder = new MediaRecorder(stream);
-        const chunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        let chunks = [];
 
         mediaRecorder.addEventListener('dataavailable', event => {
             const blob = event.data;
-            if(blob.size > 0) {
+            if( blob.size > 0 ) {
                 chunks.push(blob);
             }
-        })
+        });
 
         mediaRecorder.addEventListener('stop', event => {
-            const blob = new Blob(chunks, { type: 'video/webm'});
+            const blob = new Blob(chunks, { type: 'video/webm' });
             const url = URL.createObjectURL(blob);
-            downloadLink.innerHTML = 'Download video';
             downloadLink.href = url;
+            downloadLink.classList.remove('hidden');
             downloadLink.download = 'recording.webm';
         })
 
         mediaRecorder.start();
     })
 
-    stopRecording.addEventListener('click', () => {
-        if(mediaRecorder) {
+    stopRecording.addEventListener('click', async () => {
+        if( mediaRecorder ) {
             stopRecording.disabled = true;
             startRecording.disabled = false;
             mediaRecorder.stop();
             mediaRecorder = null;
         } else {
-            errorMessage.innerHTML = 'No recording to stop';
+            errorMessage.innerHTML = 'No recording to stop.';
         }
     })
 }
