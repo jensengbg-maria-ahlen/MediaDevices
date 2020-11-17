@@ -13,6 +13,7 @@ body {
 button {
     background-color: #f7e8c9;
     padding: .8em 1.2em;
+    margin: .4em;
 }
 
 .profile img {
