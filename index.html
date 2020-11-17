@@ -22,13 +22,20 @@
             </p>
         </section>
         <section class="video">
-            <button class="start-stream"> Show camera video </button>
-            <button disabled class="stop-stream"> Stop video </button>
+            <div>
+                <button class="start-stream"> Show camera video </button>
+                <button disabled class="stop-stream"> Stop video </button>
+                <button disabled class="switch-camera">Switch camera</button>
+            </div>
+            <div>
+                <button disabled class="start-recording">Start Recording</button>
+                <button disabled class="stop-recording">Stop Recording</button>
+                <a href="" download='' class="a-link"></a>
+            </div>
 
             <p class="message error"></p>
-            <video src="" autoplay poster="" controls>
-
-            </video>
+            <video src="" autoplay poster="" controls></video>
+            
         </section>
     </main>
 </body>
