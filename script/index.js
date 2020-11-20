@@ -16,6 +16,7 @@ function cameraSettings() {
     const errorMessage = document.querySelector('.video > .error');
     const showVideoButton = document.querySelector('.video .start-stream');
     const stopButton = document.querySelector('.video .stop-stream');
+    const facingButton = document.querySelector('.video .change-facing');
     const photoButton = document.querySelector('.profile button');
     const profilePic = document.querySelector('.profile > img');
     const startRecording = document.querySelector('.video .start-recording');
@@ -25,12 +26,14 @@ function cameraSettings() {
     // .profile       button  --> 011, enklare
 
     let stream;
+    let facingMode = 'environment';
+
     showVideoButton.addEventListener('click', async () => {
         errorMessage.innerHTML = '';
         try {
             const md = navigator.mediaDevices;
             stream = await md.getUserMedia({
-                video: { width: 320, height: 320 }
+                video: { width: 320, height: 320, facingMode: facingMode }
             })
 
             const video = document.querySelector('.video > video');
@@ -60,6 +63,18 @@ function cameraSettings() {
         showVideoButton.disabled = false;
         startRecording.disabled = true;
         stopRecording.disabled = true;
+    })
+
+    facingButton.addEventListener('click', () => {
+        if(facingMode == 'environment') {
+            facingMode = 'user';
+            facingButton.innerHTML = 'Show environment';
+        } else {
+            facingMode = 'environment';
+            facingButton.innerHTML = 'Show user';
+        }
+        stopButton.click();
+        showVideoButton.click();
     })
 
     photoButton.addEventListener('click', async () => {
@@ -107,7 +122,7 @@ function cameraSettings() {
         })
         mediaRecorder.start();
     })
-    
+
     stopRecording.addEventListener('click', async () => {
         if( mediaRecorder ) {
             stopRecording.disabled = true;
