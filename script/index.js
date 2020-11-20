@@ -1,32 +1,31 @@
-if ('serviceWorker' in navigator) {
+if( 'serviceWorker' in navigator ) {
     navigator.serviceWorker.register('sw.js')
-        .then(reg => {
-            console.log('Registration succeeded. Scope is ' + reg.scope);
-        });
+    .then(reg => {
+        console.log('Service worker registered.');
+    })
 }
-
-const errorMessage = document.querySelector('.message.error');
-const startButton = document.querySelector('.start-stream');
-const stopButton = document.querySelector('.stop-stream');
-const switchCamera = document.querySelector('.switch-camera');
-const photoButton = document.querySelector('.profile button');
-const profilePic = document.querySelector('.profile > img');
-const startRecording = document.querySelector('.start-recording');
-const stopRecording = document.querySelector('.stop-recording');
-const downloadLink = document.querySelector('.a-link');
-
 
 
 window.addEventListener('load', () => {
-    if ('mediaDevices' in navigator) {
+    if( 'mediaDevices' in navigator ) {
         cameraSettings();
     }
 })
 
-
 function cameraSettings() {
+    const errorMessage = document.querySelector('.video > .error');
+    const showVideoButton = document.querySelector('.video .start-stream');
+    const stopButton = document.querySelector('.video .stop-stream');
+    const photoButton = document.querySelector('.profile button');
+    const profilePic = document.querySelector('.profile > img');
+    const startRecording = document.querySelector('.video .start-recording');
+    const stopRecording = document.querySelector('.video .stop-recording');
+    const downloadLink = document.querySelector('.video .downloadLink');
+    // .profile > p > button  --> 012, omständigt men mer specifikt
+    // .profile       button  --> 011, enklare
+
     let stream;
-    startButton.addEventListener('click', async () => {
+    showVideoButton.addEventListener('click', async () => {
         errorMessage.innerHTML = '';
         try {
             const md = navigator.mediaDevices;
@@ -36,11 +35,11 @@ function cameraSettings() {
 
             const video = document.querySelector('.video > video');
             video.srcObject = stream;
-
+            
             stopButton.disabled = false;
             photoButton.disabled = false;
+            showVideoButton.disabled = true;
             startRecording.disabled = false;
-            startButton.disabled = true;
 
         } catch (e) {
             errorMessage.innerHTML = 'Could not show camera window.';
@@ -55,17 +54,18 @@ function cameraSettings() {
         }
         let tracks = stream.getTracks();
         tracks.forEach(track => track.stop());
-        
+       
         stopButton.disabled = true;
         photoButton.disabled = true;
-        startButton.disabled = false;
+        showVideoButton.disabled = false;
         startRecording.disabled = true;
         stopRecording.disabled = true;
     })
 
     photoButton.addEventListener('click', async () => {
-        if (!stream) {
-            errorMessage.innerHTML = 'No video to take photo from';
+        errorMessage.innerHTML = '';
+        if( !stream ) {
+            errorMessage.innerHTML = 'No video to take photo from.';
             return;
         }
 
@@ -76,7 +76,6 @@ function cameraSettings() {
 
         let imgUrl = URL.createObjectURL(blob);
         profilePic.src = imgUrl;
-        profilePic.classList.remove('hidden');
     })
 
     let mediaRecorder;
@@ -85,30 +84,30 @@ function cameraSettings() {
             errorMessage.innerHTML = 'No video available';
             return;
         }
-
         startRecording.disabled = true;
         stopRecording.disabled = false;
         mediaRecorder = new MediaRecorder(stream);
         let chunks = [];
-
         mediaRecorder.addEventListener('dataavailable', event => {
+            console.log('mediaRecorder.dataavailable: ', event);
             const blob = event.data;
             if( blob.size > 0 ) {
                 chunks.push(blob);
             }
         });
-
         mediaRecorder.addEventListener('stop', event => {
+            console.log('mediaRecorder.stop: ', event);
             const blob = new Blob(chunks, { type: 'video/webm' });
+            // WEBM-formatet fungerar i Chrome och Firefox
+            // Använd gärna MP4 som fallback
             const url = URL.createObjectURL(blob);
             downloadLink.href = url;
             downloadLink.classList.remove('hidden');
             downloadLink.download = 'recording.webm';
         })
-
         mediaRecorder.start();
     })
-
+    
     stopRecording.addEventListener('click', async () => {
         if( mediaRecorder ) {
             stopRecording.disabled = true;
